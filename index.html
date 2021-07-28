@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="qrcode.css">
+    <!-- https://github.com/davidshimjs/qrcodejs -->
+    <script src="qrcode.min.js"></script>
+    <title>QRcode Generator for TSXDemo App</title>
+</head>
+
+<body onload="load()">
+    <div id="div-form">
+        <form>
+            <ul class="form-style-1">
+                <li>
+                    <label>URL <span class="required">*</span></label>
+                    <select id="idProtocol" name="fieldProtocol" class="field-select-devided">
+                        <option value="1" selected>https://</option>
+                        <option value="0">http://</option>
+                    </select>
+                    <input type="text" id="idUrl" class="field-middle" value="*.training.transmit-field.com">
+                </li>
+                <li>
+                    <label>Realm</label>
+                    <input type="text" id="idRealm" class="field-long">
+                </li>
+                <li>
+                    <label>Cryptography Mode <span class="required">*</span></label>
+                    <select id="idCrypto" name="" class="field-select">
+                        <option value="None" selected>None</option>
+                        <option value="Credentials">Credentials</option>
+                        <option value="Full">Full</option>
+                    </select>
+                </li>
+                <li>
+                    <label>Application ID <span class="required">*</span></label>
+                    <input type="text" id="idAppId" class="field-long" value="MyApp">
+                </li>
+                <li>
+                    <label>Token Name <span class="required">*</span></labeL>
+                    <input type="text" id="idTokenName" class="field-long" value="demo">
+                </li>
+                <li>
+                    <label>Token Value <span class="required">*</span></label>
+                    <input type="text" id="idTokenValue" class="field-long" value="demo">
+                </li>
+                <li>
+                    <input type="button" value="Generate QR Code" id="btnShowQR" onclick="genQRcode()">
+                </li>
+            </ul>
+        </form>
+    </div>
+    <div id="div-qrcode">
+        <div id="div-iphone"><span class="div-text">for iPhone</span></div>
+        <div id="div-android"><span class="div-text">for Android</span></div>
+    </div>
+    <script>
+        let qriPhone, qrAndroid;
+
+        function showQRcode(url, place) {
+            qrcode = new QRCode(place, {
+                text: url,
+                width: 200,
+                height: 200,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.L
+            });
+            return qrcode;
+        }
+
+        function getParam() {
+            var params = [];
+
+            // Check Server URL
+            if (!(server_url = document.getElementById("idUrl").value)) {
+                alert("Enter Server URL");
+                document.getElementById("idUrl").focus();
+                return false;
+            } else {
+                params.push("server_url=" + server_url);
+            }
+
+            // Add Protocol Parameter
+            secured = document.getElementById("idProtocol").value;
+            params.push("secured=" + secured);
+
+            // Check Token Name
+            if (!(token_name = document.getElementById("idTokenName").value)) {
+                alert("Enter Token Namme");
+                document.getElementById("idTokenName").focus();
+                return false;
+            } else {
+                params.push("token_name=" + token_name);
+            }
+
+            // Check Token Value
+            if (!(token = document.getElementById("idTokenValue").value)) {
+                alert("Enter Token Value");
+                document.getElementById("idTokenValue").focus();
+                return false;
+            } else {
+                params.push("token=" + token);
+            }
+
+            // Add Realm Parameter
+            realm = document.getElementById("idRealm").value || "";
+            params.push("realm=" + realm)
+
+            // Check Application ID
+            if (!(aid = document.getElementById("idAppId").value)) {
+                alert("Enter Application ID");
+                document.getElementById("idAppId").focus();
+                return false;
+            } else {
+                params.push("aid=" + aid);
+            }
+
+            // Check Cryptography Mode
+            if (!(crypt = document.getElementById("idCrypto").value)) {
+                alert("Enter Cryptography Mode");
+                document.getElementById("idCrypto").focus();
+                return false;
+            } else {
+                params.push("crypto=" + crypt);
+            }
+
+            // Return Parameter
+            param = "/v1:initialize?" + params.join("&");
+            return param;
+        }
+
+        function load() {
+            param = getParam();
+            if (param) {
+                urliPhone = "tsxdemo://www.transmitsecurity.com" + param;
+                urlAndroid = "http://www.transmitsecurity.com" + param;
+                console.log(urliPhone);
+                console.log(urlAndroid);
+                placeiPhone = document.getElementById("div-iphone");
+                qriPhone = showQRcode(urliPhone, placeiPhone);
+                placeAndroid = document.getElementById("div-android");
+                qrAndroid = showQRcode(urlAndroid, placeAndroid);
+            }
+        }
+
+        function genQRcode() {
+            param = getParam();
+            if (param) {
+                urliPhone = "tsxdemo://www.transmitsecurity.com" + param;
+                urlAndroid = "http://www.transmitsecurity.com" + param;
+                console.log(urliPhone);
+                console.log(urlAndroid);
+                qriPhone.makeCode(urliPhone);
+                qrAndroid.makeCode(urlAndroid);
+            }
+        }
+    </script>
+</body>
+
+</html>
